@@ -1,10 +1,8 @@
-// src/firebase/firebaseConfig.ts
+// src/firebase.ts
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
 
-// Your Firebase configuration from the console
+// Use your Firebase config here
 const firebaseConfig = {
   apiKey: "AIzaSyA3sLe9ZShuJM0oJURs3sb_ch9GEFRpuHc",
   authDomain: "pantrix-f546d.firebaseapp.com",
@@ -15,10 +13,5 @@ const firebaseConfig = {
   measurementId: "G-J4M7PHZXZR"
 };
 
-// Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-
-// Services to use in other files
-export const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-export const storage = getStorage(app);

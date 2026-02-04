@@ -1,51 +1,35 @@
+// src/services/firebase/foodService.ts
 import { db } from "../../firebase/firebaseConfig";
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-  doc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, updateDoc, doc, deleteDoc } from "firebase/firestore";
 
-export interface FoodItem {
-  id?: string;
+// Reference to "foodItems" collection
+const foodCollection = collection(db, "foodItems");
+
+// Add a new food item
+export const addFoodItem = async (item: {
   name: string;
   quantity: number;
   expiryDate: string;
   ownerId: string;
-  createdAt?: any;
-}
-
-const foodCollection = collection(db, "foodItems");
-
-export const addFoodItem = async (item: FoodItem) => {
-  return await addDoc(foodCollection, {
-    ...item,
-    createdAt: serverTimestamp(),
-  });
+}) => {
+  return await addDoc(foodCollection, item);
 };
 
-export const getMyFoodItems = async (userId: string) => {
-  const q = query(foodCollection, where("ownerId", "==", userId));
+// Get all food items for a user
+export const getUserFoodItems = async (ownerId: string) => {
+  const q = query(foodCollection, where("ownerId", "==", ownerId));
   const snapshot = await getDocs(q);
-
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as FoodItem[];
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
 
-export const updateFoodItem = async (
-  itemId: string,
-  data: Partial<FoodItem>
-) => {
-  return await updateDoc(doc(db, "foodItems", itemId), data);
+// Update a food item
+export const updateFoodItem = async (id: string, data: any) => {
+  const docRef = doc(db, "foodItems", id);
+  return await updateDoc(docRef, data);
 };
 
-export const deleteFoodItem = async (itemId: string) => {
-  return await deleteDoc(doc(db, "foodItems", itemId));
+// Delete a food item
+export const deleteFoodItem = async (id: string) => {
+  const docRef = doc(db, "foodItems", id);
+  return await deleteDoc(docRef);
 };

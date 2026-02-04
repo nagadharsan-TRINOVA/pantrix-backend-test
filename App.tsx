@@ -1,3 +1,5 @@
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { db } from './firebase'; // this is the file you just created
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { InventoryItem as InventoryItemType, DonationRequest, Recipe, ShoppingListItem as ShoppingListItemType, SmartPlateData, UserProfile, HotelProfile, FoodBankProfile, MembershipTier, RequirementRequest, WasteHotspot } from './types';
 import { getRecipeSuggestions, getSmartRecipes, getShoppingListSuggestions, generateSmartPlate, geocodeLocation, getBusinessNames, getWasteHotspots } from './services/geminiService';
@@ -54,6 +56,28 @@ const getMembershipTier = (donationCount: number): MembershipTier | null => {
 };
 
 const AppContent: React.FC = () => {
+    const testFirestore = async () => {
+  try {
+    // Write a test document
+    const docRef = await addDoc(collection(db, "testCollection"), {
+      name: "Test Item",
+      createdAt: new Date().toISOString(),
+    });
+    console.log("Document written with ID:", docRef.id);
+
+    // Read all documents
+    const querySnapshot = await getDocs(collection(db, "testCollection"));
+    const items: any[] = [];
+    querySnapshot.forEach((doc) => {
+      items.push({ id: doc.id, ...doc.data() });
+    });
+    console.log("Documents in Firestore:", items);
+    alert("Firestore test completed! Check console.");
+  } catch (err) {
+    console.error("Firestore test failed:", err);
+    alert("Firestore test failed! See console.");
+  }
+};
     const { t, language } = useLanguage();
     // Routing and user state
     const [currentPage, setCurrentPage] = useState<Page>('welcome');
